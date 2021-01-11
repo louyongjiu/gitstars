@@ -1,4 +1,4 @@
-[English document](https://github.com/Monine/gitstars/blob/master/README-en.md)
+[English document](https://github.com/znlbwo/gitstars/blob/master/README-en.md)
 
 Github 作为开发者的第一社交平台，拥有数不胜数的优秀开源项目，给工作和学习带来巨大方便，遇到自己需要或是喜爱的项目只需轻轻点击 Star 便可收入囊中。
 
@@ -15,11 +15,11 @@ Gitstars 由此诞生 🎉
 # Gitstars
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![GitHub license](https://img.shields.io/github/license/Monine/gitstars.svg)](https://github.com/Monine/gitstars/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/znlbwo/gitstars.svg)](https://github.com/znlbwo/gitstars/blob/master/LICENSE)
 
 > 每个开发者都该拥有的 Github Stars Repositories Manager
 
-欢迎进入 [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) 体验畅玩，更欢迎体验之后在 [Issues](https://github.com/Monine/gitstars/issues) 提供建议。
+欢迎进入 [https://znlbwo.github.io/gitstars/](https://znlbwo.github.io/gitstars/) 体验畅玩，更欢迎体验之后在 [Issues](https://github.com/znlbwo/gitstars/issues) 提供建议。
 
 ![uQZDQH.png](https://s2.ax1x.com/2019/09/28/uQZDQH.png)
 
@@ -33,7 +33,7 @@ Gitstars 由此诞生 🎉
 
 大量使用 Flex 布局，所以请不要在 IE 浏览器上使用。
 
-本项目发布版使用 Vue 开发，源码在 [dev 分支](https://github.com/Monine/gitstars/tree/dev)。也有 React 开发版本，源码在 [react-dev 分支](https://github.com/Monine/gitstars/tree/react-dev)，仅用作练习。
+本项目发布版使用 Vue 开发，源码在 [dev 分支](https://github.com/znlbwo/gitstars/tree/dev)。也有 React 开发版本，源码在 [react-dev 分支](https://github.com/znlbwo/gitstars/tree/react-dev)，仅用作练习。
 
 欢迎阅读源码，提出意见。
 
@@ -45,7 +45,7 @@ Gitstars 由此诞生 🎉
 
 ![uQVgGF.png](https://s2.ax1x.com/2019/09/28/uQVgGF.png)
 
-当你第一次访问 [Gitstars](https://monine.github.io/gitstars/)，你的 Github Gists 内会生成一个文件名为 `gitstars.json` 的 Gist 项目。（上图有两个是因为开发所需，作为用户，你只会有一个。）
+当你第一次访问 [Gitstars](https://znlbwo.github.io/gitstars/)，你的 Github Gists 内会生成一个文件名为 `gitstars.json` 的 Gist 项目。（上图有两个是因为开发所需，作为用户，你只会有一个。）
 
 你所有的标签管理数据都储存在 `gitstars.json` 这份文件内，也就是说你所有的标签管理操作都是在修改这份文件而已，没有数据库，一切都在 Github 上，都属于你。
 

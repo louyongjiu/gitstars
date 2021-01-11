@@ -1,4 +1,4 @@
-[中文文档](https://github.com/Monine/gitstars)
+[中文文档](https://github.com/znlbwo/gitstars)
 
 As the developer's first social platform, github has countless outstanding open source projects that bring great convenience to work and study. Projects that you need or love are just a click away from Star.
 
@@ -15,15 +15,15 @@ Pure front-end implementation, no server and database, your github is everything
 # Gitstars
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![GitHub license](https://img.shields.io/github/license/Monine/gitstars.svg)](https://github.com/Monine/gitstars/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/znlbwo/gitstars.svg)](https://github.com/znlbwo/gitstars/blob/master/LICENSE)
 
 > Github stars repositories manager, which every developer owns.
 
-Welcome to [https://monine.github.io/gitstars/](https://monine.github.io/gitstars/) to enjoy the fun, more welcome to provide advice in the [Issues](https://github.com/Monine/gitstars/issues) after the experience.
+Welcome to [https://znlbwo.github.io/gitstars/](https://znlbwo.github.io/gitstars/) to enjoy the fun, more welcome to provide advice in the [Issues](https://github.com/znlbwo/gitstars/issues) after the experience.
 
 ![gitstars](http://oh8wftuto.bkt.clouddn.com/gitstars-v2.0.0.jpg)
 
-*Thanks to [imsun](https://github.com/imsun) for get access token service*
+_Thanks to [imsun](https://github.com/imsun) for get access token service_
 
 ## Technology stack
 
@@ -35,7 +35,7 @@ Welcome to [https://monine.github.io/gitstars/](https://monine.github.io/gitstar
 
 Extensive use of Flex layout, so please do not use on IE.
 
-The project release version using Vue development, source [dev branch](https://github.com/Monine/gitstars/tree/dev). There is also a React development version, source in [react-dev branch](https://github.com/Monine/gitstars/tree/react-dev), just for practice.
+The project release version using Vue development, source [dev branch](https://github.com/znlbwo/gitstars/tree/dev). There is also a React development version, source in [react-dev branch](https://github.com/znlbwo/gitstars/tree/react-dev), just for practice.
 
 Welcome to read the source code, make comments.
 
