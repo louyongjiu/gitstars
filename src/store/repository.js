@@ -19,7 +19,7 @@ async function getStarredRepositoriesWithRetry(params, maxRetries = 3) {
       const response = await getStarredRepositories(params);
       return response; // 如果成功，返回结果
     } catch (error) {
-      const isRateLimitError = error.status === 403;
+      const isRateLimitError = error.response?.status === 403;
       const retryAfter = error.response?.headers?.['retry-after'] || error.response?.headers?.['Retry-After'];;
 
       if (isRateLimitError && retryAfter) {
@@ -217,10 +217,10 @@ export const useRepositoryStore = defineStore('repository', {
       }
 
       // 开发环境默认不通过 HTTP 更新 repositories
-      if (!import.meta.env.DEV) {
+      // if (!import.meta.env.DEV) {
         await handlerRsolveRepositories(this.all);
         localStorage.setItem(STARRED_REPOS, JSON.stringify(this.all));
-      }
+      // }
       this.loading = false;
     },
   },
