@@ -11,6 +11,32 @@ import { useRankingStore } from '@/store/ranking';
  * @param {Array} storeRepositories
  * @returns
  */
+async function getStarredRepositoriesWithRetry(params, maxRetries = 3) {
+  let retryDelay = 1000; // 默认重试间隔，单位为毫秒
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await getStarredRepositories(params);
+      return response; // 如果成功，返回结果
+    } catch (error) {
+      const isRateLimitError = error.status === 403;
+      const retryAfter = error.response?.headers?.['retry-after'] || error.response?.headers?.['Retry-After'];;
+
+      if (isRateLimitError && retryAfter) {
+        retryDelay = parseInt(retryAfter) * 1000; // 将秒转换为毫秒
+      }
+
+      if (i < maxRetries - 1 && isRateLimitError) {
+        console.error(`Request failed, retrying after ${retryDelay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, retryDelay));
+      } else {
+        throw error; // 如果达到最大重试次数或者错误不是速率限制，抛出错误
+      }
+    }
+  }
+}
+
+
 async function handlerRsolveRepositories(storeRepositories) {
   const PAGE_SIZE = 100;
   const PARALLEL_NUM = 10;
@@ -21,7 +47,7 @@ async function handlerRsolveRepositories(storeRepositories) {
 
   do {
     parallelRequests.push(
-      getStarredRepositories({ page, per_page: PAGE_SIZE }),
+      getStarredRepositoriesWithRetry({ page, per_page: PAGE_SIZE }),
     );
 
     if (page % PARALLEL_NUM === 0) {
@@ -55,6 +81,7 @@ async function handlerRsolveRepositories(storeRepositories) {
     page += 1;
   } while (true);
 }
+
 
 export const useRepositoryStore = defineStore('repository', {
   state: () => ({
