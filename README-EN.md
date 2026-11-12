@@ -1,193 +1,61 @@
-![Gitstars](public/brand.png)
+![Gitstars](docs/brand.png)
 
 <div align="center">
 
 [简体中文](./README.md) / [English](./README-EN.md)
 
-A repository manager for organizing, searching, and browsing your GitHub Stars.
-
 </div>
 
-## What is Gitstars?
+Gitstars helps you manage your GitHub Stars. Sign in with GitHub to filter saved repositories by topic or programming language, search your collection, preview READMEs, and explore popular projects by language.
 
-As your list of starred repositories grows, finding a project again becomes increasingly difficult with GitHub's built-in list alone. Gitstars syncs your public Stars and organizes them by Topics and programming language, making your saved repositories easier to search, filter, and revisit.
+[Try Gitstars online](https://cfour-hi-gitstars.vercel.app/)
 
-Gitstars also provides GitHub repository rankings grouped by programming language to help you discover open-source projects worth following.
+## Screenshot
 
-## Features
+![Your Stars view showing repository categories, search, and a README preview](docs/example-your-stars.png)
 
-- **Your Stars**: Sync and browse the repositories starred by the current GitHub account.
-- **Automatic categories**: Group repositories by Topics and primary programming language.
-- **Fast search**: Search by owner, repository name, or description.
-- **Flexible sorting**: Sort by starred date or number of Stars.
-- **Gitstars Ranking**: Explore the top 100 repositories for different programming languages.
-- **README preview**: Read repository documentation without leaving Gitstars.
-- **Direct links**: Open a GitHub repository or its project website quickly.
-- **Chinese and English UI**: Switch languages directly in the application.
+In **Your Stars**, you can search by repository owner, name, or description and sort by starred date or star count. **Gitstars Ranking** shows popular repositories by programming language. The interface is available in Chinese and English. [Ranking screenshot](docs/example-github-ranking.png)
 
-## Screenshots
+## Quick start with Docker
 
-### Your Stars
-
-Organize and search your Stars by Topics and Language:
-
-![Your Stars](public/example-your-stars.png)
-
-### Gitstars Ranking
-
-Browse popular GitHub repositories by programming language:
-
-![Gitstars Ranking](public/example-github-ranking.png)
-
-### Topics and Language
-
-Topics are maintained by repository authors and describe a project's purpose and technical areas:
-
-![Topics](public/example-topics.png)
-
-Language is the primary programming language calculated by GitHub from the files in a repository:
-
-![Languages](public/example-languages.png)
-
-## Local deployment with Docker
-
-Docker deployments use HTTPS by default. [mkcert](https://github.com/FiloSottile/mkcert) is recommended for generating a locally trusted development certificate.
-
-### Requirements
-
-- Docker and Docker Compose
-- mkcert
-- A GitHub OAuth App
+You need Docker, Docker Compose, and [mkcert](https://github.com/FiloSottile/mkcert). Run the following commands from the repository root.
 
 ### 1. Create a GitHub OAuth App
 
-Open [GitHub Developer Settings](https://github.com/settings/developers), create an OAuth App, and use the following local defaults:
+Create an OAuth App, set both **Homepage URL** and **Authorization callback URL** to `https://localhost:8080`, and get the Client ID and Client Secret. [GitHub Developer Settings](https://github.com/settings/developers)
 
-| Setting | Local default |
-| --- | --- |
-| Homepage URL | `https://localhost:8080` |
-| Authorization callback URL | `https://localhost:8080` |
-
-The callback URL must exactly match the **protocol, host, and port** used in the browser. If you change the exposed Docker port through `GITSTARS_PORT`, update the callback URL to use the same port.
-
-### 2. Configure environment variables
-
-Copy the environment template:
+### 2. Configure the environment
 
 ```bash
 cp .env.example .env
+id -u
+id -g
 ```
 
-Edit `.env` and enter the OAuth App's Client ID and Client Secret:
+Set the following variables in `.env`. The Client Secret is for server-side use. Keep `.env` and the certificate's private key secure.
 
-```dotenv
-VITE_GITSTARS_CLIENT_ID=your_github_oauth_client_id
-GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
+| Variable                        | Value                                                                                                 |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `VITE_GITSTARS_CLIENT_ID`       | OAuth App Client ID, embedded in the frontend at build time                                           |
+| `GITHUB_CLIENT_SECRET`          | OAuth App Client Secret, passed to the container at runtime                                           |
+| `GITSTARS_UID` / `GITSTARS_GID` | Output of `id -u` / `id -g`, respectively, so the container can read the private key with mode `0600` |
+| `GITSTARS_PORT`                 | Host HTTPS port, default `8080`. Update the OAuth callback port if you change it                      |
+| `GITSTARS_CERT_DIR`             | Local certificate directory, default `./.certs`                                                       |
 
-GITSTARS_PORT=8080
-GITSTARS_CERT_DIR=./.certs
-```
-
-### 3. Generate a local HTTPS certificate
+### 3. Generate certificates and start Gitstars
 
 ```bash
 ./scripts/setup-local-https.sh
-```
-
-The script installs the local mkcert development CA and creates these files in `.certs`:
-
-```text
-.certs/localhost.pem
-.certs/localhost-key.pem
-```
-
-The certificate covers `localhost`, `127.0.0.1`, and `::1`. The `.certs` directory is ignored by both Git and the Docker build context. Certificates are mounted read-only into the running container.
-
-### 4. Build and start the service
-
-```bash
 docker compose up -d --build
 ```
 
-Once the service is running, open:
+The script trusts the local mkcert CA and generates `localhost.pem` and `localhost-key.pem` in the certificate directory. Once the container starts, open [Gitstars](https://localhost:8080) or check the [health endpoint](https://localhost:8080/healthz).
 
-- Gitstars: [https://localhost:8080](https://localhost:8080)
-- Health check: [https://localhost:8080/healthz](https://localhost:8080/healthz)
+Run `docker compose logs -f gitstars` to view logs and `docker compose down` to stop the service.
 
-Check the service status and logs:
+## Local development
 
-```bash
-docker compose ps
-docker compose logs -f gitstars
-```
-
-Stop the service:
-
-```bash
-docker compose down
-```
-
-## Environment variables
-
-| Variable | Required | Default | Description |
-| --- | --- | --- | --- |
-| `VITE_GITSTARS_CLIENT_ID` | Yes | — | GitHub OAuth App Client ID; embedded in the frontend during the build |
-| `GITHUB_CLIENT_SECRET` | Yes | — | GitHub OAuth App Client Secret; injected only at container runtime |
-| `GITSTARS_PORT` | No | `8080` | HTTPS port exposed on the host |
-| `GITSTARS_CERT_DIR` | No | `./.certs` | Directory containing `localhost.pem` and `localhost-key.pem` |
-
-Rebuild the image after changing `VITE_GITSTARS_CLIENT_ID`:
-
-```bash
-docker compose up -d --build
-```
-
-If only `GITHUB_CLIENT_SECRET` changes, recreate the container:
-
-```bash
-docker compose up -d --force-recreate
-```
-
-## OAuth troubleshooting
-
-### `The redirect_uri is not associated with this application`
-
-Gitstars uses the browser's current `location.origin` as the OAuth `redirect_uri`. Make sure the Authorization callback URL in the GitHub OAuth App exactly matches the address used to access Gitstars:
-
-| Address used in the browser | Correct callback URL |
-| --- | --- |
-| `https://localhost:8080` | `https://localhost:8080` |
-| `https://127.0.0.1:8080` | `https://127.0.0.1:8080` |
-
-The following values are not interchangeable:
-
-- `http` and `https`
-- `localhost` and `127.0.0.1`
-- Different ports
-
-Use the site root as the callback URL. Do not append `/api/oauth/access_token`.
-
-### The browser does not trust the certificate
-
-Generate and install the local certificate again, then restart the browser:
-
-```bash
-./scripts/setup-local-https.sh
-```
-
-Firefox uses a separate certificate store and might require the local mkcert CA to be trusted separately.
-
-### Gitstars still redirects to the previous OAuth App after changing the Client ID
-
-The Client ID is embedded in the frontend during the build. Rebuild after modifying `.env`:
-
-```bash
-docker compose up -d --build
-```
-
-## Local frontend development
-
-Local development requires Node.js 18 or later and pnpm 9:
+Use Node.js 22.x (at least 22.13) and pnpm 12.18.0 to match the CI environment.
 
 ```bash
 pnpm install
@@ -195,32 +63,20 @@ pnpm cert:local
 pnpm dev
 ```
 
-The Vite development server runs at `https://localhost:30000` by default and uses the same `.certs` directory as Docker. This port comes from the Vite development configuration and is independent of Docker's default port `8080`. Set `VITE_API_PROXY` when an OAuth API proxy is required.
+Vite serves the app at `https://localhost:30000` by default. To test GitHub sign-in, set `VITE_API_PROXY` in `.env` to a running Gitstars OAuth backend, such as `https://localhost:8080`. Use the Client ID that pairs with the backend's Client Secret, and set that OAuth App's callback URL to the address you use to open the dev app.
 
-Common commands:
+CI runs `pnpm format:check`, `pnpm lint`, `pnpm test`, and `pnpm build` in that order.
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the Vite development server |
-| `pnpm build` | Create a production build |
-| `pnpm preview` | Preview the production build |
-| `pnpm cert:local` | Generate and trust the local HTTPS certificate |
+## Deploy to Vercel
 
-## Vercel deployment
+Import the repository, set `VITE_GITSTARS_CLIENT_ID` and `GITHUB_CLIENT_SECRET` in the Vercel project environment, and set the GitHub OAuth App's callback URL to the deployed site's root URL. Existing deployments can still use `VITE_GITSTARS_CLIENT_SECRET`. Use `GITHUB_CLIENT_SECRET` for new deployments. [Vercel deployment Wiki (Chinese)](https://github.com/cfour-hi/gitstars/wiki/Vercel-%E9%83%A8%E7%BD%B2)
 
-See the [Vercel deployment Wiki](https://github.com/cfour-hi/gitstars/wiki/Vercel-%E9%83%A8%E7%BD%B2).
+## Troubleshooting
 
-## Technology stack
+- **GitHub reports `The redirect_uri is not associated with this application`.** Use the site root as the callback URL. Its scheme, host, and port must match the browser address, for example `https://localhost:8080`.
+- **The browser does not trust the local certificate.** Run `./scripts/setup-local-https.sh` again and restart your browser. Firefox may need to trust the local mkcert CA separately.
+- **Gitstars still uses old OAuth credentials.** Run `docker compose up -d --build` after changing the Client ID. If you only changed the Client Secret, run `docker compose up -d --force-recreate`.
 
-- Vue 3, Vite, and Pinia
-- Tailwind CSS
-- GitHub REST API and OAuth
-- Node.js HTTPS server
-- Docker Compose
+## License
 
-## Security notes
-
-- `GITHUB_CLIENT_SECRET` is injected only into the running container. It is not included in frontend assets or the final image.
-- Local certificates and private keys are stored in `.certs`. They are not committed to Git or included in the Docker build context.
-- The OAuth access token is stored in the browser's LocalStorage. Use Gitstars only on trusted devices.
-- Never commit `.env`, a Client Secret, or a local certificate private key.
+[MIT License](LICENSE)
